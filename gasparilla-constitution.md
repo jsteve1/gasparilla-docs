@@ -12,7 +12,7 @@ Gasparilla Shopify is a **full-stack gym management Shopify plugin** that replic
 
 ```
 ┌───────────────────────────────────────┐
-│           Shopify Admin UI            │  ← Polars-based embedded app
+│           Shopify Admin UI            │  ← Shopify Polaris-based embedded app
 │         (Sidebar / Native UI)         │
 └───────────────────┬───────────────────┘
                     │ OAuth · Webhooks · REST/GraphQL
@@ -20,7 +20,7 @@ Gasparilla Shopify is a **full-stack gym management Shopify plugin** that replic
 │     gasparilla-shopify (Plugin)       │  ← The "Front Door"
 │  • Shopify OAuth + token refresh     │
 │  • Webhook ingestion & HMAC verify   │
-│  • Polars UI rendering               │
+│  • Shopify Polaris UI rendering               │
 │  • Thin request routing              │
 └───────────────────┬───────────────────┘
                     │ HTTPS / EventBridge
@@ -75,9 +75,9 @@ Gasparilla Shopify is a **full-stack gym management Shopify plugin** that replic
 | **Bluetooth reader** | BLE works within 20m (66ft) radius. Any phone with Bluetooth. | Same BLE readers. Issue unique tokens per member. Token stored in DynamoDB. |
 | **Gatekeeper hub** | $550 hub between software and reader/lock. Links to door locks, till printers, barcode scanners. | Lambda-based access decision service. Reader calls cloud endpoint. Decision: GRANT / DENY. |
 | **Reception reader** | RFID + Bluetooth check-in only (no door lock). Staff check-in without staff present. | Reception kiosk UI in member app. Scan fob or tap phone → logs visit. |
-| **QR code check-in** | Dynamic QR at door screen. Member opens app → scans. Alternative: enter member ID / phone / email. | Polars UI at kiosk. Dynamic QR rotates every 30 seconds. Fallback: ID lookup. |
+| **QR code check-in** | Dynamic QR at door screen. Member opens app → scans. Alternative: enter member ID / phone / email. | Shopify Polaris UI at kiosk. Dynamic QR rotates every 30 seconds. Fallback: ID lookup. |
 | **Passcode access** | Some readers support numeric PIN codes. | Issue 6-digit PINs via member app. Expiry + rotation configurable. |
-| **Key fob assignment** | Manual: open member → hold fob to reader → number auto-fills → save. One active fob per member by default. Multi-fob available via support. | Polars UI: staff assigns fob number. Deactivate = clear field. Lost fob → instant revoke. |
+| **Key fob assignment** | Manual: open member → hold fob to reader → number auto-fills → save. One active fob per member by default. Multi-fob available via support. | Shopify Polaris UI: staff assigns fob number. Deactivate = clear field. Lost fob → instant revoke. |
 | **Tailgating detection** | $400 camera system. Detects non-member following member through. Notifies staff. | Optional add-on. Use existing door reader events + motion sensor data. Alert via Slack/Telegram. |
 | **Door-level rules** | Each door configured independently. Different access per membership tier per door. | DynamoDB `DoorConfig` table. Rules engine evaluates: does this member's tier allow this door at this time? |
 | **Sound feedback** | Configurable sounds per access outcome (granted, denied, warning, test). | Reception computer plays sound via WebSocket event. |
@@ -98,13 +98,13 @@ Member approaches door → Reader reads (fob / BLE token / QR / PIN)
 | Feature | What GymMaster Does | How We Implement |
 |---|---|---|
 | **Member profiles** | Full CRM: marketing channel, billing history, visitation, bookings, measurements, purchases, communications, notes. | DynamoDB `Members` table with custom fields. Sync Shopify customer data. Enrich with gym-specific data. |
-| **Custom fields** | Store any data the gym needs (injuries, goals, diet, allergies). | DynamoDB attributes. Polars UI for gym admins to define custom fields. |
-| **Online sign-up** | Direct website or tablet-based sign-up with payment. Paperless. | Polars embedded sign-up form. Shopify checkout for payment. |
-| **Sales funnel / lead tracking** | Dashboard tracks steps: call → email → tour → sign-up. Consistent conversion. | DynamoDB `Leads` table. Status pipeline in Polars UI. |
+| **Custom fields** | Store any data the gym needs (injuries, goals, diet, allergies). | DynamoDB attributes. Shopify Polaris UI for gym admins to define custom fields. |
+| **Online sign-up** | Direct website or tablet-based sign-up with payment. Paperless. | Shopify Polaris embedded sign-up form. Shopify checkout for payment. |
+| **Sales funnel / lead tracking** | Dashboard tracks steps: call → email → tour → sign-up. Consistent conversion. | DynamoDB `Leads` table. Status pipeline in Shopify Polaris UI. |
 | **Website lead capture** | Contacts feed directly into sales funnel. | Shopify form → webhook → Lambda creates Lead record. |
 | **Gamification** | Visit streaks, rewards, referrals, word-of-mouth encouragement. | DynamoDB `Activities` table. Points engine in Lambda. Badges in member app. |
 | **At-risk detection** | Auto-flag members who haven't visited in N days. Auto-engage. | Lambda scheduled scan: last_visit > threshold → trigger email/SMS campaign. |
-| **Member search** | Find by name, ID, phone, email, fob number. | DynamoDB GSI queries. Polars search UI. |
+| **Member search** | Find by name, ID, phone, email, fob number. | DynamoDB GSI queries. Shopify Polaris search UI. |
 
 ### 4.3 Billing
 
@@ -122,24 +122,24 @@ Member approaches door → Reader reads (fob / BLE token / QR / PIN)
 
 | Feature | What GymMaster Does | How We Implement |
 |---|---|---|
-| **Real-time timetable** | Live schedule on app & website. | DynamoDB `Schedule` table. Polars calendar UI. |
-| **Self-service booking** | Members book classes/PT directly. No staff needed. | Polars booking UI. Member authenticates via Google OAuth. |
+| **Real-time timetable** | Live schedule on app & website. | DynamoDB `Schedule` table. Shopify Polaris calendar UI. |
+| **Self-service booking** | Members book classes/PT directly. No staff needed. | Shopify Polaris booking UI. Member authenticates via Google OAuth. |
 | **Waitlists** | Opt-in when class is full. Auto-fill on cancellation. | DynamoDB `Waitlist` table. Lambda triggers on cancellation. |
 | **No-show prevention** | Optional upfront payment for bookings. | Shopify Checkout session at booking time. |
 | **Auto-check-in** | When member swipes fob at class time → auto check-in. | Access event + schedule cross-reference in Lambda. |
 | **Multiple resource types** | Classes, personal trainers, rooms, equipment. | DynamoDB `Resources` table. Book against any resource. |
 | **Capacity limits** | Max attendees per class/room. | `max_capacity` attribute. Lambda enforces at booking time. |
-| **Rescheduling** | Members can modify bookings. | Polars UI. Lambda handles slot swap. |
+| **Rescheduling** | Members can modify bookings. | Shopify Polaris UI. Lambda handles slot swap. |
 
 ### 4.5 Marketing & Sales
 
 | Feature | What GymMaster Does | How We Implement |
 |---|---|---|
 | **Multi-channel comms** | Email, SMS, push notifications to leads, members, at-risk, historic. | SendGrid (email), Twilio (SMS), FCM/APNs (push). Lambda orchestrates. |
-| **Audience segmentation** | Advanced targeting by behavior, membership type, visitation. | DynamoDB queries + Lambda filter logic. Segment builder UI in Polars. |
+| **Audience segmentation** | Advanced targeting by behavior, membership type, visitation. | DynamoDB queries + Lambda filter logic. Segment builder UI in Shopify Polaris. |
 | **AI communication assist** | AI-generated message suggestions. | OpenAI API integration in Lambda. |
-| **Bulk campaigns** | Send bulk messages to defined segments. | Polars campaign builder. Lambda batches sends. |
-| **Reporting & KPIs** | Dozens of preset reports. Custom dashboards. | Lambda aggregates. Polars renders charts (Recharts / D3). |
+| **Bulk campaigns** | Send bulk messages to defined segments. | Shopify Polaris campaign builder. Lambda batches sends. |
+| **Reporting & KPIs** | Dozens of preset reports. Custom dashboards. | Lambda aggregates. Shopify Polaris renders charts (Recharts / D3). |
 
 **Key KPIs:**
 - New members per month / quarter
@@ -157,11 +157,11 @@ Member approaches door → Reader reads (fob / BLE token / QR / PIN)
 
 | Feature | What GymMaster Does | How We Implement |
 |---|---|---|
-| **Branded member portal** | Custom-branded web dashboard for members. | Polars UI with gym branding theme (colors, logo). |
-| **Mobile app** | Android + iOS. Sign-up, bookings, payments, check-in, workouts. | Polars PWA (progressive web app) as MVP. Native app later. |
-| **PT workout tracking** | Members view assigned workouts and progress. | DynamoDB `Workouts` table. Polars timeline UI. |
+| **Branded member portal** | Custom-branded web dashboard for members. | Shopify Polaris UI with gym branding theme (colors, logo). |
+| **Mobile app** | Android + iOS. Sign-up, bookings, payments, check-in, workouts. | Shopify Polaris PWA (progressive web app) as MVP. Native app later. |
+| **PT workout tracking** | Members view assigned workouts and progress. | DynamoDB `Workouts` table. Shopify Polaris timeline UI. |
 | **Measurement tracking** | Body measurements, progress photos. | S3 for photos. DynamoDB for measurements. |
-| **Membership management** | View plan, upgrade/downgrade, payment history. | Polars member dashboard. |
+| **Membership management** | View plan, upgrade/downgrade, payment history. | Shopify Polaris member dashboard. |
 | **Community features** | Referrals, social sharing, engagement tools. | Referral code system in Lambda. Share links via deep links. |
 
 ### 4.7 POS & Inventory
@@ -177,9 +177,9 @@ Member approaches door → Reader reads (fob / BLE token / QR / PIN)
 
 | Feature | What GymMaster Does | How We Implement |
 |---|---|---|
-| **Digital waivers** | Liability waivers collected during sign-up. | S3-stored PDF templates. Polars signature capture. Stored in DynamoDB + synced to Shopify metafield. |
+| **Digital waivers** | Liability waivers collected during sign-up. | S3-stored PDF templates. Shopify Polaris signature capture. Stored in DynamoDB + synced to Shopify metafield. |
 | **Terms acceptance** | Members accept gym terms/rules. | Same flow as waivers. Versioned terms. Re-acceptance on version change. |
-| **Age-gated waivers** | Minor waivers require parent/guardian signature. | Conditional fields in Polars form. |
+| **Age-gated waivers** | Minor waivers require parent/guardian signature. | Conditional fields in Shopify Polaris form. |
 
 ---
 
@@ -189,16 +189,16 @@ Member approaches door → Reader reads (fob / BLE token / QR / PIN)
 
 | ID | Story | Acceptance Criteria |
 |---|---|---|
-| GO-001 | I want to configure membership tiers with different access rules per door | Create tier in Polars → assign doors + hours → save → verify member on that tier gets access |
-| GO-002 | I want to see a dashboard of today's visits, revenue, and new sign-ups | Open Polars home → see KPI widgets → data refreshes every 5 minutes |
-| GO-003 | I want to auto-send an email to members who haven't visited in 14 days | Configure retention rule in Polars → Lambda triggers → email sent via SendGrid |
-| GO-004 | I want to view all members currently in the gym | Open Polars visitor board → see real-time active check-ins |
-| GO-005 | I want to block access for members with unpaid balances over $50 | Set balance threshold in Polars → access service denies → member sees denial reason |
-| GO-006 | I want to export member data (CSV) for my accountant | Click export in Polars → CSV downloads with billing history |
+| GO-001 | I want to configure membership tiers with different access rules per door | Create tier in Shopify Polaris → assign doors + hours → save → verify member on that tier gets access |
+| GO-002 | I want to see a dashboard of today's visits, revenue, and new sign-ups | Open Shopify Polaris home → see KPI widgets → data refreshes every 5 minutes |
+| GO-003 | I want to auto-send an email to members who haven't visited in 14 days | Configure retention rule in Shopify Polaris → Lambda triggers → email sent via SendGrid |
+| GO-004 | I want to view all members currently in the gym | Open Shopify Polaris visitor board → see real-time active check-ins |
+| GO-005 | I want to block access for members with unpaid balances over $50 | Set balance threshold in Shopify Polaris → access service denies → member sees denial reason |
+| GO-006 | I want to export member data (CSV) for my accountant | Click export in Shopify Polaris → CSV downloads with billing history |
 | GO-007 | I want to create a limited-class package pass | Create membership type → set max_classes → set expiration → sell via Shopify |
 | GO-008 | I want to see which classes are under-utilized | KPI report shows class fill rates → filter by percentage |
 | GO-009 | I want a new member to be created when someone signs up through Shopify checkout | Shopify order webhook → Lambda creates member record in DynamoDB + sends welcome email |
-| GO-010 | I want to customize the branding of the member portal | Upload logo + set colors in Polars admin → portal updates immediately |
+| GO-010 | I want to customize the branding of the member portal | Upload logo + set colors in Shopify Polaris admin → portal updates immediately |
 
 ### 5.2 Reception / Front Desk Staff
 
@@ -327,7 +327,7 @@ KPIs (PK: kpi_id, SK: shop_id#YYYYMMDD)
 ### Phase 1: Foundation (Weeks 1-3)
 - [x] Sandbox environment with OAuth + webhooks
 - [x] Dockerization of plugin
-- [ ] Polars UI scaffold
+- [ ] Shopify Polaris UI scaffold
 - [ ] DynamoDB schema creation with migrations
 - [ ] Lambda deployment pipeline (SAM/Serverless Framework)
 - [ ] Member CRUD operations
@@ -335,13 +335,13 @@ KPIs (PK: kpi_id, SK: shop_id#YYYYMMDD)
 
 ### Phase 2: Digital Waivers + Sign-Up (Weeks 4-5)
 - [ ] Waiver PDF template upload to S3
-- [ ] Polars sign-up form with signature capture
+- [ ] Shopify Polaris sign-up form with signature capture
 - [ ] Age-gated minor waivers
 - [ ] Versioned terms with forced re-acceptance
 - [ ] Shopify order webhook → auto-create member on purchase
 
 ### Phase 3: Membership Management + Billing (Weeks 6-9)
-- [ ] Membership tier creation in Polars
+- [ ] Membership tier creation in Shopify Polaris
 - [ ] Shopify Subscription integration
 - [ ] Dunning engine (retry logic, access downgrade)
 - [ ] Balance threshold config + access blocking
@@ -358,9 +358,9 @@ KPIs (PK: kpi_id, SK: shop_id#YYYYMMDD)
 
 ### Phase 5: Access Control (Weeks 14-16)
 - [ ] Access decision Lambda service
-- [ ] Door + rule configuration in Polars
+- [ ] Door + rule configuration in Shopify Polaris
 - [ ] BLE token issuance
-- [ ] Key fob assignment in Polars
+- [ ] Key fob assignment in Shopify Polaris
 - [ ] QR code dynamic check-in
 - [ ] Passcode access system
 - [ ] Integration with Nuki / Salto locks (MVP hardware)
@@ -381,7 +381,7 @@ KPIs (PK: kpi_id, SK: shop_id#YYYYMMDD)
 - [ ] CSV export for accounting
 
 ### Phase 8: Member App (Weeks 24-28)
-- [ ] Polars PWA scaffold
+- [ ] Shopify Polaris PWA scaffold
 - [ ] Member profile dashboard
 - [ ] Booking calendar in app
 - [ ] Progress / measurement tracking
@@ -451,7 +451,7 @@ POST   /api/kpis/aggregate   — Run aggregation job
 | PII encryption | DynamoDB server-side encryption + TLS in transit |
 | OAuth token storage | AWS Secrets Manager |
 | Webhook verification | HMAC-SHA256 + timestamp replay prevention |
-| GDPR compliance | Member data export/delete via Polars UI |
+| GDPR compliance | Member data export/delete via Shopify Polaris UI |
 | PCI compliance | Shopify Payments handles cards. We never touch card data. |
 | Waiver legal validity | Stored signatures with IP, timestamp, version hash in S3 |
 | Rate limiting | API Gateway throttling + DynamoDB capacity management |
