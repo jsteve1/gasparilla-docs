@@ -1,0 +1,496 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Gasparilla Shopify — Product Roadmap</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap');
+
+  :root {
+    --bg-primary: #0a0a0f;
+    --bg-secondary: #111118;
+    --bg-card: #16161f;
+    --bg-card-hover: #1d1d27;
+    --border: #252533;
+    --text-primary: #e8e8ed;
+    --text-secondary: #8888a0;
+    --text-muted: #555568;
+    --accent-blue: #3b82f6;
+    --accent-purple: #8b5cf6;
+    --accent-emerald: #10b981;
+    --accent-amber: #f59e0b;
+    --accent-rose: #f43f5e;
+    --accent-cyan: #06b6d4;
+    --accent-orange: #f97316;
+    --accent-pink: #ec4899;
+    --accent-indigo: #6366f1;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg-primary);
+    color: var(--text-primary);
+    font-family: 'Inter', -apple-system, sans-serif;
+    line-height: 1.6;
+    overflow-x: hidden;
+  }
+
+  .bg-grid {
+    position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+    background-image:
+      linear-gradient(rgba(255,255,255,.02) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,255,255,.02) 1px, transparent 1px);
+    background-size: 40px 40px;
+    pointer-events: none; z-index: 0;
+  }
+
+  .container {
+    position: relative; z-index: 1;
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 40px 24px;
+  }
+
+  /* Header */
+  .header { text-align: center; margin-bottom: 48px; }
+  .badge {
+    display: inline-block; padding: 4px 12px; border-radius: 999px;
+    background: rgba(139,92,246,0.15); color: var(--accent-purple);
+    border: 1px solid rgba(139,92,246,0.3); font-size: 12px;
+    font-family: 'JetBrains Mono', monospace; font-weight: 500;
+    margin-bottom: 20px;
+  }
+  .header h1 {
+    font-size: 42px; font-weight: 800; letter-spacing: -0.02em;
+    background: linear-gradient(135deg, #e8e8ed 0%, #3b82f6 50%, #8b5cf6 100%);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    margin-bottom: 12px;
+  }
+  .header p { color: var(--text-secondary); font-size: 16px; max-width: 600px; margin: 0 auto; }
+
+  /* Filter tabs */
+  .filters {
+    display: flex; justify-content: center; gap: 8px;
+    margin-bottom: 40px; flex-wrap: wrap;
+  }
+  .filter-btn {
+    padding: 8px 16px; border-radius: 8px; border: 1px solid var(--border);
+    background: var(--bg-secondary); color: var(--text-secondary);
+    font-size: 13px; font-weight: 500; cursor: pointer; transition: all 0.2s;
+    font-family: 'Inter', sans-serif;
+  }
+  .filter-btn:hover { background: var(--bg-card); color: var(--text-primary); }
+  .filter-btn.active {
+    background: rgba(59,130,246,0.15); color: var(--accent-blue);
+    border-color: rgba(59,130,246,0.4);
+  }
+
+  /* Timeline */
+  .timeline {
+    position: relative;
+    padding-left: 60px;
+  }
+  .timeline::before {
+    content: '';
+    position: absolute;
+    left: 28px; top: 0; bottom: 0;
+    width: 2px;
+    background: linear-gradient(to bottom, var(--accent-blue), var(--accent-purple), var(--accent-emerald), var(--accent-amber), var(--accent-rose), var(--accent-cyan), var(--accent-orange), var(--accent-pink));
+  }
+
+  .phase-group {
+    position: relative;
+    margin-bottom: 24px;
+    opacity: 1;
+    transition: opacity 0.3s;
+  }
+  .phase-group.hidden { display: none; }
+
+  .phase-dot {
+    position: absolute;
+    left: -44px; top: 20px;
+    width: 14px; height: 14px;
+    border-radius: 50%;
+    border: 2px solid var(--dot-color);
+    background: var(--bg-primary);
+  }
+  .phase-dot::after {
+    content: '';
+    position: absolute; top: 3px; left: 3px;
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--dot-color);
+  }
+
+  .phase-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    overflow: hidden;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .phase-card:hover { background: var(--bg-card-hover); }
+
+  .phase-header {
+    padding: 20px 24px;
+    display: flex; align-items: center; gap: 16px;
+  }
+  .phase-number {
+    display: flex; align-items: center; justify-content: center;
+    width: 36px; height: 36px; border-radius: 8px;
+    font-size: 14px; font-weight: 700;
+    flex-shrink: 0;
+  }
+  .phase-meta { flex: 1; }
+  .phase-title { font-size: 16px; font-weight: 700; margin-bottom: 2px; }
+  .phase-weeks { font-size: 13px; color: var(--text-secondary); }
+  .phase-chevron {
+    color: var(--text-muted);
+    transition: transform 0.2s;
+    flex-shrink: 0;
+  }
+  .phase-group.open .phase-chevron { transform: rotate(180deg); }
+
+  /* Expanded content */
+  .phase-body {
+    max-height: 0; overflow: hidden;
+    transition: max-height 0.3s ease;
+  }
+  .phase-group.open .phase-body {
+    max-height: 600px;
+  }
+  .phase-body-inner {
+    padding: 0 24px 20px;
+    border-top: 1px solid var(--border);
+    padding-top: 16px;
+  }
+
+  /* Tasks */
+  .task-list { list-style: none; }
+  .task-item {
+    display: flex; align-items: flex-start; gap: 10px;
+    padding: 8px 0;
+    font-size: 14px; color: var(--text-secondary);
+    border-bottom: 1px solid rgba(255,255,255,0.03);
+  }
+  .task-item:last-child { border-bottom: none; }
+  .task-check {
+    width: 18px; height: 18px; border-radius: 4px;
+    border: 1.5px solid var(--border);
+    flex-shrink: 0;
+    margin-top: 2px;
+    cursor: pointer;
+    transition: all 0.15s;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .task-check:hover { border-color: var(--accent-blue); }
+  .task-check.done {
+    background: var(--accent-blue);
+    border-color: var(--accent-blue);
+  }
+  .task-check.done::after {
+    content: '✓'; color: #fff; font-size: 11px; font-weight: 700;
+  }
+  .task-item.completed .task-label { text-decoration: line-through; color: var(--text-muted); }
+
+  .task-label { line-height: 1.5; }
+
+  /* Summary strip */
+  .summary {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 12px; margin-bottom: 40px;
+  }
+  .summary-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 20px;
+    text-align: center;
+  }
+  .summary-num {
+    font-size: 28px; font-weight: 800;
+    background: linear-gradient(135deg, var(--accent-blue), var(--accent-purple));
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  }
+  .summary-label { font-size: 12px; color: var(--text-secondary); margin-top: 4px; text-transform: uppercase; letter-spacing: 0.05em; }
+
+  /* Progress bar */
+  .progress-wrap {
+    margin-bottom: 40px;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 20px 24px;
+  }
+  .progress-header {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 12px;
+  }
+  .progress-label { font-size: 14px; font-weight: 600; }
+  .progress-pct { font-size: 14px; color: var(--accent-blue); font-weight: 600; }
+  .progress-bar {
+    height: 8px; border-radius: 999px;
+    background: var(--bg-primary);
+    overflow: hidden;
+  }
+  .progress-fill {
+    height: 100%; border-radius: 999px;
+    background: linear-gradient(90deg, var(--accent-blue), var(--accent-purple));
+    transition: width 0.5s ease;
+  }
+
+  /* Footer */
+  .footer {
+    text-align: center; margin-top: 48px;
+    padding-top: 24px; border-top: 1px solid var(--border);
+    font-size: 12px; color: var(--text-muted);
+    font-family: 'JetBrains Mono', monospace;
+  }
+  .footer a { color: var(--accent-blue); text-decoration: none; }
+  .footer a:hover { text-decoration: underline; }
+
+  @media (max-width: 640px) {
+    .header h1 { font-size: 28px; }
+    .timeline { padding-left: 40px; }
+    .timeline::before { left: 18px; }
+    .phase-dot { left: -36px; }
+  }
+</style>
+</head>
+<body>
+<div class="bg-grid"></div>
+<div class="container">
+
+  <div class="header">
+    <div class="badge">v1.0 — Living Document</div>
+    <h1>Gasparilla Shopify</h1>
+    <p>Full-stack gym management plugin — 8 phases, 28 weeks, $89/mo target. Replicating and improving GymMaster feature-for-feature on Shopify.</p>
+  </div>
+
+  <div class="summary">
+    <div class="summary-card"><div class="summary-num">8</div><div class="summary-label">Phases</div></div>
+    <div class="summary-card"><div class="summary-num">28</div><div class="summary-label">Weeks</div></div>
+    <div class="summary-card"><div class="summary-num" id="taskTotal">42</div><div class="summary-label">Stories</div></div>
+    <div class="summary-card"><div class="summary-num">Serverless</div><div class="summary-label">Stack</div></div>
+    <div class="summary-card"><div class="summary-num">$89</div><div class="summary-label">Pro Price</div></div>
+  </div>
+
+  <div class="progress-wrap">
+    <div class="progress-header">
+      <span class="progress-label">Overall Progress</span>
+      <span class="progress-pct" id="progressPct">0%</span>
+    </div>
+    <div class="progress-bar"><div class="progress-fill" id="progressFill" style="width:0%"></div></div>
+  </div>
+
+  <div class="filters">
+    <button class="filter-btn active" data-filter="all">All Phases</button>
+    <button class="filter-btn" data-filter="1-2">Foundation</button>
+    <button class="filter-btn" data-filter="3-4">Core Features</button>
+    <button class="filter-btn" data-filter="5-6">Advanced</button>
+    <button class="filter-btn" data-filter="7-8">Finishing</button>
+  </div>
+
+  <div class="timeline" id="timeline"></div>
+
+  <div class="footer">
+    <p>Built with Hermes Agent · <a href="https://github.com/jsteve1/gasparilla-docs">View Source</a></p>
+  </div>
+</div>
+
+<script>
+const PHASES = [
+  {
+    num: 1, title: "Foundation", weeks: "Week 1–3",
+    color: "#3b82f6", gradient: "linear-gradient(135deg, #3b82f6, #2563eb)",
+    group: "1-2",
+    tasks: [
+      "Project scaffold: Node 20 + Polaris UI Kit",
+      "Shopify Partner dev store setup",
+      "AWS account + IAM roles",
+      "DynamoDB table definitions",
+      "API Gateway + Lambda bootstrap",
+      "GitHub repo + CI basics",
+      "Dev environment documented (README)",
+    ]
+  },
+  {
+    num: 2, title: "Digital Waivers + Sign-Up", weeks: "Week 4–5",
+    color: "#8b5cf6", gradient: "linear-gradient(135deg, #8b5cf6, #7c3aed)",
+    group: "1-2",
+    tasks: [
+      "Member sign-up form UI (Polaris)",
+      "Waiver template versioning system",
+      "Digital signature capture + S3 storage",
+      "HMAC verification + IP logging",
+      "Legal text management panel",
+      "Waiver compliance dashboard",
+      "Webhook: new-member → DynamoDB sync",
+    ]
+  },
+  {
+    num: 3, title: "Membership & Billing", weeks: "Week 6–9",
+    color: "#10b981", gradient: "linear-gradient(135deg, #10b981, #059669)",
+    group: "3-4",
+    tasks: [
+      "Membership tier CRUD (Starter/Pro/Enterprise)",
+      "Recurring billing via Shopify Subscriptions",
+      "Proration on mid-cycle upgrades/downgrades",
+      "Dunning management (failed payment retries)",
+      "Billing history UI",
+      "Auto-balance blocking on unpaid accounts",
+      "Stripe webhook → member status sync",
+      "CSV export for accounting",
+    ]
+  },
+  {
+    num: 4, title: "Booking Engine", weeks: "Week 10–13",
+    color: "#f59e0b", gradient: "linear-gradient(135deg, #f59e0b, #d97706)",
+    group: "3-4",
+    tasks: [
+      "Resource creation (classes, trainers, rooms)",
+      "Schedule builder UI",
+      "Member booking flow with capacity enforcement",
+      "Waitlist system",
+      "Auto-check-in on class time + visit",
+      "No-show detection + refund logic",
+    ]
+  },
+  {
+    num: 5, title: "Access Control", weeks: "Week 14–16",
+    color: "#f43f5e", gradient: "linear-gradient(135deg, #f43f5e, #e11d48)",
+    group: "5-6",
+    tasks: [
+      "Access decision Lambda service",
+      "Door + rule configuration in Polaris",
+      "BLE token issuance",
+      "Key fob assignment",
+      "QR code dynamic check-in",
+      "Passcode access system",
+      "Integration with Nuki/Salto locks (MVP)",
+    ]
+  },
+  {
+    num: 6, title: "Marketing & Retention", weeks: "Week 17–20",
+    color: "#06b6d4", gradient: "linear-gradient(135deg, #06b6d4, #0891b2)",
+    group: "5-6",
+    tasks: [
+      "Member segmentation engine",
+      "Automated campaign builder",
+      "At-risk detection (X days no visit → trigger)",
+      "Email + SMS integration (SendGrid + Twilio)",
+      "Push notifications (PWA)",
+      "Referral system with point rewards",
+    ]
+  },
+  {
+    num: 7, title: "Dashboard & Analytics", weeks: "Week 21–23",
+    color: "#f97316", gradient: "linear-gradient(135deg, #f97316, #ea580c)",
+    group: "7-8",
+    tasks: [
+      "KPI aggregation Lambdas",
+      "Dashboard widgets (visits, revenue, churn, utilization)",
+      "Custom report builder",
+      "Real-time visitor board",
+      "CSV export for accounting",
+    ]
+  },
+  {
+    num: 8, title: "Member App (PWA)", weeks: "Week 24–28",
+    color: "#ec4899", gradient: "linear-gradient(135deg, #ec4899, #db2777)",
+    group: "7-8",
+    tasks: [
+      "Shopify Polaris PWA scaffold",
+      "Member profile dashboard",
+      "Booking calendar in app",
+      "Progress / measurement tracking",
+      "Workout viewer for PT clients",
+      "Push notifications in PWA",
+    ]
+  }
+];
+
+// Load state from localStorage
+function getTaskState(phase, idx) {
+  const key = `task_${phase}_${idx}`;
+  return localStorage.getItem(key) === 'true';
+}
+function setTaskState(phase, idx, val) {
+  localStorage.setItem(`task_${phase}_${idx}`, val);
+}
+
+// Calculate progress
+function updateProgress() {
+  let total = 0, done = 0;
+  PHASES.forEach((p, pi) => p.tasks.forEach((_, ti) => {
+    total++; if (getTaskState(pi, ti)) done++;
+  }));
+  const pct = total ? Math.round(done/total*100) : 0;
+  document.getElementById('progressPct').textContent = pct + '%';
+  document.getElementById('progressFill').style.width = pct + '%';
+  document.getElementById('taskTotal').textContent = total;
+}
+
+// Render timeline
+function render() {
+  const el = document.getElementById('timeline');
+  el.innerHTML = PHASES.map((p, pi) => `
+    <div class="phase-group" data-group="${p.group}" id="phase${pi}">
+      <div class="phase-dot" style="--dot-color:${p.color}"></div>
+      <div class="phase-card" onclick="document.getElementById('phase${pi}').classList.toggle('open')">
+        <div class="phase-header">
+          <div class="phase-number" style="background:${p.gradient};color:#fff">${p.num}</div>
+          <div class="phase-meta">
+            <div class="phase-title">${p.title}</div>
+            <div class="phase-weeks">${p.weeks} · ${p.tasks.length} stories</div>
+          </div>
+          <svg class="phase-chevron" width="20" height="20" viewBox="0 0 20 20" fill="none">
+            <path d="M5 8l5 5 5-5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+          </svg>
+        </div>
+        <div class="phase-body">
+          <div class="phase-body-inner">
+            <ul class="task-list">
+              ${p.tasks.map((t, ti) => {
+                const done = getTaskState(pi, ti);
+                return `<li class="task-item${done ? ' completed' : ''}">
+                  <div class="task-check${done ? ' done' : ''}" onclick="event.stopPropagation();toggle(${pi},${ti})"></div>
+                  <span class="task-label">${t}</span>
+                </li>`;
+              }).join('')}
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  `).join('');
+  updateProgress();
+}
+
+function toggle(phase, idx) {
+  setTaskState(phase, idx, !getTaskState(phase, idx));
+  render();
+}
+
+// Filters
+document.querySelectorAll('.filter-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    const f = btn.dataset.filter;
+    document.querySelectorAll('.phase-group').forEach(pg => {
+      if (f === 'all') pg.classList.remove('hidden');
+      else pg.classList.toggle('hidden', !f.includes(pg.dataset.group.split('-')[0]) && !f.includes(pg.dataset.group.split('-')[1]));
+    });
+  });
+});
+
+render();
+</script>
+</body>
+</html>
