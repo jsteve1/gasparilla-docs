@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Gasparilla — Kanban Board</title>
+<style>
+  :root {
+    --bg: #0d1117; --card: #161b22; --border: #30363d;
+    --text: #c9d1d9; --muted: #8b949e;
+    --blue: #58a6ff; --purple: #bc8cff; --green: #3fb950;
+    --orange: #d29922; --red: #f85149; --teal: #39d2c0; --pink: #f778ba; --cyan: #76e3fc;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { background: var(--bg); color: var(--text); font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif; padding: 2rem; }
+  .header { text-align: center; margin-bottom: 2rem; }
+  .header h1 { font-size: 2rem; color: var(--blue); margin-bottom: .5rem; }
+  .header p { color: var(--muted); }
+  .badge { display: inline-block; background: #21262d; border: 1px solid var(--border); border-radius: 20px; padding: .25rem .75rem; font-size: .75rem; color: var(--muted); margin-bottom: 1rem; }
+  .stats { display: flex; justify-content: center; gap: 1rem; margin-bottom: 1.5rem; flex-wrap: wrap; }
+  .stat { background: var(--card); border: 1px solid var(--border); border-radius: 8px; padding: .75rem 1.25rem; text-align: center; min-width: 100px; }
+  .stat .num { font-size: 1.5rem; font-weight: bold; }
+  .stat .label { font-size: .7rem; color: var(--muted); text-transform: uppercase; letter-spacing: .05em; }
+  .phase-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 1.5rem; margin-bottom: 2rem; }
+  .phase { background: var(--card); border: 1px solid var(--border); border-radius: 12px; overflow: hidden; }
+  .phase-header { padding: 1rem; cursor: pointer; display: flex; align-items: center; gap: .75rem; user-select: none; }
+  .phase-header:hover { background: rgba(255,255,255,.03); }
+  .phase-num { width: 32px; height: 32px; border-radius: 8px; display: grid; place-items: center; font-weight: 700; font-size: .85rem; color: #fff; flex-shrink: 0; }
+  .phase-title { flex: 1; }
+  .phase-title h3 { font-size: .95rem; margin-bottom: .15rem; }
+  .phase-title span { font-size: .75rem; color: var(--muted); }
+  .phase-body { padding: 0 1rem 1rem; }
+  .story { display: flex; gap: .5rem; padding: .5rem; border-radius: 6px; margin-bottom: .25rem; align-items: flex-start; transition: background .15s; }
+  .story:hover { background: rgba(255,255,255,.04); }
+  .story input[type="checkbox"] { margin-top: 3px; accent-color: var(--green); width: 14px; height: 14px; cursor: pointer; }
+  .story label { cursor: pointer; font-size: .85rem; line-height: 1.3; }
+  .story.done label { text-decoration: line-through; color: var(--muted); }
+  .progress-wrap { background: #21262d; border-radius: 4px; height: 6px; margin-top: .5rem; }
+  .progress-bar { height: 100%; border-radius: 4px; transition: width .3s; }
+  .filters { display: flex; justify-content: center; gap: .5rem; margin-bottom: 1.5rem; flex-wrap: wrap; }
+  .filter-btn { background: var(--card); border: 1px solid var(--border); color: var(--text); padding: .4rem 1rem; border-radius: 20px; cursor: pointer; font-size: .8rem; transition: all .15s; }
+  .filter-btn.active { border-color: var(--blue); background: rgba(88,166,255,.1); }
+  .filter-btn:hover { border-color: var(--muted); }
+  footer { text-align: center; color: var(--muted); font-size: .75rem; margin-top: 2rem; }
+  footer a { color: var(--blue); text-decoration: none; }
+  .arrow { transition: transform .2s; color: var(--muted); font-size: .7rem; }
+  .collapsed .arrow { transform: rotate(-90deg); }
+  .collapsed + .phase-body { display: none; }
+</style>
+</head>
+<body>
+<div class="header">
+  <div class="badge">v1.0 · Live Board</div>
+  <h1>Gasparilla Shopify</h1>
+  <p>Kanban board — 52 stories across 8 phases</p>
+</div>
+<div class="stats" id="stats"></div>
+<div class="filters">
+  <button class="filter-btn active" data-filter="all">All</button>
+  <button class="filter-btn" data-filter="1-2">Foundation</button>
+  <button class="filter-btn" data-filter="3-4">Core Features</button>
+  <button class="filter-btn" data-filter="5-6">Advanced</button>
+  <button class="filter-btn" data-filter="7-8">Finishing</button>
+</div>
+<div class="phase-grid" id="board"></div>
+<footer><p>Built with Hermes Agent · <a href="https://github.com/jsteve1/gasparilla-docs">Source</a></p></footer>
+<script>
+const PHASES = [
+  { num: 1, name: "Foundation", weeks: "Week 1–3", color: "#58a6ff", stories: [
+    "Project scaffold: Node 20 + Polaris UI Kit",
+    "Shopify Partner dev store setup",
+    "AWS account + IAM roles",
+    "DynamoDB table definitions",
+    "API Gateway + Lambda bootstrap",
+    "GitHub repo + CI basics",
+    "Dev environment documented (README)"
+  ]},
+  { num: 2, name: "Digital Waivers + Sign-Up", weeks: "Week 4–5", color: "#bc8cff", stories: [
+    "Member sign-up form UI (Polaris)",
+    "Waiver template versioning system",
+    "Digital signature capture + S3 storage",
+    "HMAC verification + IP logging",
+    "Legal text management panel",
+    "Waiver compliance dashboard",
+    "Webhook: new-member → DynamoDB sync"
+  ]},
+  { num: 3, name: "Membership & Billing", weeks: "Week 6–9", color: "#3fb950", stories: [
+    "Membership tier CRUD (Starter/Pro/Enterprise)",
+    "Recurring billing via Shopify Subscriptions",
+    "Proration on mid-cycle upgrades/downgrades",
+    "Dunning management (failed payment retries)",
+    "Billing history UI",
+    "Auto-balance blocking on unpaid accounts",
+    "Stripe webhook → member status sync",
+    "CSV export for accounting"
+  ]},
+  { num: 4, name: "Booking Engine", weeks: "Week 10–13", color: "#d29922", stories: [
+    "Resource creation (classes, trainers, rooms)",
+    "Schedule builder UI",
+    "Member booking flow with capacity enforcement",
+    "Waitlist system",
+    "Auto-check-in on class time + visit credit",
+    "No-show detection + refund logic"
+  ]},
+  { num: 5, name: "Access Control", weeks: "Week 14–16", color: "#f85149", stories: [
+    "Access decision Lambda service",
+    "Door + rule configuration in Polaris",
+    "BLE token issuance",
+    "Key fob assignment",
+    "QR code dynamic check-in",
+    "Passcode access system",
+    "Integration with Nuki/Salto locks (MVP)"
+  ]},
+  { num: 6, name: "Marketing & Retention", weeks: "Week 17–20", color: "#39d2c0", stories: [
+    "Member segmentation engine",
+    "Automated campaign builder",
+    "At-risk detection (X days no visit → trigger)",
+    "Email + SMS integration (SendGrid + Twilio)",
+    "Push notifications (PWA)",
+    "Referral system with point rewards"
+  ]},
+  { num: 7, name: "Dashboard & Analytics", weeks: "Week 21–23", color: "#76e3fc", stories: [
+    "KPI aggregation Lambdas",
+    "Dashboard widgets (visits, revenue, churn, utilization)",
+    "Custom report builder",
+    "Real-time visitor board",
+    "CSV export for accounting"
+  ]},
+  { num: 8, name: "Member App (PWA)", weeks: "Week 24–28", color: "#f778ba", stories: [
+    "Shopify Polaris PWA scaffold",
+    "Member profile dashboard",
+    "Booking calendar in app",
+    "Progress / measurement tracking",
+    "Workout viewer for PT clients",
+    "Push notifications in PWA"
+  ]}
+];
+
+const storage = (() => {
+  try { return JSON.parse(localStorage.getItem('gasparilla-kanban') || '{}'); } catch { return {}; }
+});
+
+function render() {
+  const board = document.getElementById('board');
+  const stats = document.getElementById('stats');
+  const activeFilter = document.querySelector('.filter-btn.active').dataset.filter;
+  const [fMin, fMax] = activeFilter === 'all' ? [1, 8] : activeFilter.split('-').map(Number);
+
+  let total = 0, done = 0;
+  const html = PHASES.map(p => {
+    if (p.num < fMin || p.num > fMax) return '';
+    const pDone = p.stories.map(s => storage[s] ? 1 : 0).reduce((a, b) => a + b, 0);
+    const pTotal = p.stories.length;
+    total += pTotal; done += pDone;
+    const pct = Math.round(pDone / pTotal * 100);
+    const collapsed = storage['collapse-' + p.num] ? 'collapsed' : '';
+    return '<div class="phase" data-phase="' + p.num + '">
+      <div class="phase-header ' + collapsed + '">
+        <div class="phase-num" style="background:' + p.color + '">' + p.num + '</div>
+        <div class="phase-title"><h3>' + p.name + '</h3><span>' + p.weeks + ' · ' + pDone + '/' + pTotal + ' done</span></div>
+        <span class="arrow">▼</span>
+      </div>
+      <div class="phase-body">
+        ' + p.stories.map(s => {
+          const c = storage[s] ? 'done' : '';
+          var key = 's_' + p.num + '_' + Math.abs(s.split('').reduce(function(x,y){x=((x<<5)-x)+y.charCodeAt(0);return x&x},0));
+          return '<div class="story ' + c + '"><input type="checkbox" id="' + key + '" ' + (storage[s] ? 'checked' : '') + ' onclick="check(this,'\'' + s.replace(/'/g,"\\'\'") + '\'')" ><label for="' + key + '">' + s + '</label></div>';
+        }).join('') + '
+        <div class="progress-wrap"><div class="progress-bar" style="width:' + pct + '%;background:' + p.color + '"></div></div>
+      </div>
+    </div>';
+  }).join('');
+
+  board.innerHTML = html;
+  const overallPct = total ? Math.round(done / total * 100) : 0;
+  stats.innerHTML = '
+    <div class="stat"><div class="num" style="color:var(--blue)">' + total + '</div><div class="label">Stories</div></div>
+    <div class="stat"><div class="num" style="color:var(--green)">' + done + '</div><div class="label">Done</div></div>
+    <div class="stat"><div class="num" style="color:var(--orange)">' + (total - done) + '</div><div class="label">Remaining</div></div>
+    <div class="stat"><div class="num" style="color:var(--purple)">' + overallPct + '%</div><div class="label">Progress</div></div>
+  ';
+}
+
+function check(el, story) { storage[story] = el.checked; localStorage.setItem('gasparilla-kanban', JSON.stringify(storage)); render(); }
+function toggle(num) { storage['collapse-' + num] = !storage['collapse-' + num]; localStorage.setItem('gasparilla-kanban', JSON.stringify(storage)); render(); }
+
+document.querySelector('.phase-header').onclick = function() {
+  var card = this.closest('.phase');
+  var num = parseInt(card.dataset.phase);
+  toggle(num);
+};
+
+document.querySelectorAll('.filter-btn').forEach(btn => {
+  btn.onclick = () => { document.querySelector('.filter-btn.active').classList.remove('active'); btn.classList.add('active'); render(); };
+});
+
+render();
+</script>
+</body>
+</html>
