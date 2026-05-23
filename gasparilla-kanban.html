@@ -137,8 +137,12 @@ const PHASES = [
 ];
 
 const storage = (() => {
-  try { return JSON.parse(localStorage.getItem('gasparilla-kanban') || '{}'); } catch { return {}; }
-});
+  try { return JSON.parse(localStorage.getItem('gasparilla-kanban') || '{}'); } catch(e) { return {}; }
+})();
+
+function hashKey(name) {
+  return name.split('').reduce((x,y) => (x<<5)-x+y.charCodeAt(0), 0) ^ 0;
+}
 
 function render() {
   const board = document.getElementById('board');
@@ -147,51 +151,60 @@ function render() {
   const [fMin, fMax] = activeFilter === 'all' ? [1, 8] : activeFilter.split('-').map(Number);
 
   let total = 0, done = 0;
-  const html = PHASES.map(p => {
-    if (p.num < fMin || p.num > fMax) return '';
-    const pDone = p.stories.map(s => storage[s] ? 1 : 0).reduce((a, b) => a + b, 0);
+
+  board.innerHTML = PHASES.filter(p => p.num >= fMin && p.num <= fMax).map(p => {
+    const pDone = p.stories.reduce((a, s) => a + (storage[s] ? 1 : 0), 0);
     const pTotal = p.stories.length;
     total += pTotal; done += pDone;
     const pct = Math.round(pDone / pTotal * 100);
     const collapsed = storage['collapse-' + p.num] ? 'collapsed' : '';
-    return '<div class="phase" data-phase="' + p.num + '">
-      <div class="phase-header ' + collapsed + '">
-        <div class="phase-num" style="background:' + p.color + '">' + p.num + '</div>
-        <div class="phase-title"><h3>' + p.name + '</h3><span>' + p.weeks + ' · ' + pDone + '/' + pTotal + ' done</span></div>
-        <span class="arrow">▼</span>
-      </div>
-      <div class="phase-body">
-        ' + p.stories.map(s => {
-          const c = storage[s] ? 'done' : '';
-          var key = 's_' + p.num + '_' + Math.abs(s.split('').reduce(function(x,y){x=((x<<5)-x)+y.charCodeAt(0);return x&x},0));
-          return '<div class="story ' + c + '"><input type="checkbox" id="' + key + '" ' + (storage[s] ? 'checked' : '') + ' onclick="check(this,'\'' + s.replace(/'/g,"\\'\'") + '\'')" ><label for="' + key + '">' + s + '</label></div>';
-        }).join('') + '
-        <div class="progress-wrap"><div class="progress-bar" style="width:' + pct + '%;background:' + p.color + '"></div></div>
-      </div>
-    </div>';
+    const storiesHtml = p.stories.map(s => {
+      const c = storage[s] ? 'done' : '';
+      const key = 's_' + p.num + '_' + hashKey(s);
+      return '<div class="story ' + c + '">' +
+        '<input type="checkbox" id="' + key + '"' + (storage[s] ? ' checked' : '') + ' onclick="check(this,\'' + s.replace(/'/g,"\\'") + '\')">' +
+        '<label for="' + key + '">' + s + '</label>' +
+        '</div>';
+    }).join('');
+
+    return '<div class="phase" data-phase="' + p.num + '">' +
+      '<div class="phase-header ' + collapsed + '" onclick="toggle(' + p.num + ')">' +
+        '<div class="phase-num" style="background:' + p.color + '">' + p.num + '</div>' +
+        '<div class="phase-title"><h3>' + p.name + '</h3><span>' + p.weeks + ' · ' + pDone + '/' + pTotal + ' done</span></div>' +
+        '<span class="arrow">▼</span>' +
+      '</div>' +
+      '<div class="phase-body">' + storiesHtml +
+        '<div class="progress-wrap"><div class="progress-bar" style="width:' + pct + '%;background:' + p.color + '"></div></div>' +
+      '</div>' +
+    '</div>';
   }).join('');
 
-  board.innerHTML = html;
   const overallPct = total ? Math.round(done / total * 100) : 0;
-  stats.innerHTML = '
-    <div class="stat"><div class="num" style="color:var(--blue)">' + total + '</div><div class="label">Stories</div></div>
-    <div class="stat"><div class="num" style="color:var(--green)">' + done + '</div><div class="label">Done</div></div>
-    <div class="stat"><div class="num" style="color:var(--orange)">' + (total - done) + '</div><div class="label">Remaining</div></div>
-    <div class="stat"><div class="num" style="color:var(--purple)">' + overallPct + '%</div><div class="label">Progress</div></div>
-  ';
+  stats.innerHTML =
+    '<div class="stat"><div class="num" style="color:var(--blue)">' + total + '</div><div class="label">Stories</div></div>' +
+    '<div class="stat"><div class="num" style="color:var(--green)">' + done + '</div><div class="label">Done</div></div>' +
+    '<div class="stat"><div class="num" style="color:var(--orange)">' + (total - done) + '</div><div class="label">Remaining</div></div>' +
+    '<div class="stat"><div class="num" style="color:var(--purple)">' + overallPct + '%</div><div class="label">Progress</div></div>';
 }
 
-function check(el, story) { storage[story] = el.checked; localStorage.setItem('gasparilla-kanban', JSON.stringify(storage)); render(); }
-function toggle(num) { storage['collapse-' + num] = !storage['collapse-' + num]; localStorage.setItem('gasparilla-kanban', JSON.stringify(storage)); render(); }
+function check(el, story) {
+  storage[story] = el.checked;
+  localStorage.setItem('gasparilla-kanban', JSON.stringify(storage));
+  render();
+}
 
-document.querySelector('.phase-header').onclick = function() {
-  var card = this.closest('.phase');
-  var num = parseInt(card.dataset.phase);
-  toggle(num);
-};
+function toggle(num) {
+  storage['collapse-' + num] = !storage['collapse-' + num];
+  localStorage.setItem('gasparilla-kanban', JSON.stringify(storage));
+  render();
+}
 
 document.querySelectorAll('.filter-btn').forEach(btn => {
-  btn.onclick = () => { document.querySelector('.filter-btn.active').classList.remove('active'); btn.classList.add('active'); render(); };
+  btn.onclick = () => {
+    document.querySelector('.filter-btn.active').classList.remove('active');
+    btn.classList.add('active');
+    render();
+  };
 });
 
 render();
