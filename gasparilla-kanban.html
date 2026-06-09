@@ -172,13 +172,19 @@ const DEFAULT_STORIES = [
   {text:'GitHub repo + CI pipeline',phase:1,col:5},
   {text:'Dev environment documented (README)',phase:1,col:5},
   // Phase 2: Waivers
-  {text:'Member sign-up form UI (Polaris)',phase:2,col:0},
-  {text:'Waiver template versioning system',phase:2,col:0},
-  {text:'Digital signature capture + S3 storage',phase:2,col:0},
-  {text:'HMAC verification + IP logging',phase:2,col:0},
-  {text:'Legal text management panel',phase:2,col:0},
-  {text:'Waiver compliance dashboard',phase:2,col:0},
-  {text:'Webhook: new-member → DynamoDB sync',phase:2,col:0},
+  {text:'Member sign-up form API routes (PR #22)',phase:2,col:5},
+  {text:'Member sign-up form UI (Polaris) — backend done, UI pending',phase:2,col:2},
+  {text:'Waiver template versioning system (PR #18, #21)',phase:2,col:5},
+  {text:'Signature field management per template (PR #21 — 2.9)',phase:2,col:5},
+  {text:'Digital signature capture + S3 storage (PR #16, #18)',phase:2,col:5},
+  {text:'HMAC verification + IP logging (PR #23, fix Jun 9)',phase:2,col:5},
+  {text:'Legal text management panel — backend done, admin UI pending',phase:2,col:2},
+  {text:'Age-gated minor waivers / guardian signature (PR #26 — 2.4)',phase:2,col:5},
+  {text:'Versioned terms with forced re-acceptance (PR #25 — 2.5)',phase:2,col:5},
+  {text:'Waiver compliance dashboard (PR #24, #25 — 2.7)',phase:2,col:5},
+  {text:'Webhook: new-member → DynamoDB sync (PR #23 — 2.6)',phase:2,col:5},
+  {text:'Waiver PDF composition service (issue #19 — 2.8)',phase:2,col:0},
+  {text:'shop_id auth validation in settingsService (issue #27)',phase:2,col:0},
   // Phase 3: Billing
   {text:'Membership tier CRUD (Starter/Pro/Enterprise)',phase:3,col:0},
   {text:'Recurring billing via Shopify Subscriptions',phase:3,col:0},
@@ -225,7 +231,7 @@ const DEFAULT_STORIES = [
   {text:'Push notifications in PWA',phase:8,col:0},
 ];
 
-const STORAGE_KEY = 'gasparilla-kanban-v2';
+const STORAGE_KEY = 'gasparilla-kanban-v3';
 let stories = [];
 let searchFilter = '';
 let phaseFilter = 'all';
