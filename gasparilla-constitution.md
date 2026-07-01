@@ -324,73 +324,106 @@ KPIs (PK: kpi_id, SK: shop_id#YYYYMMDD)
 
 ## 8. Roadmap — Feature Rollout Phases
 
-### Phase 1: Foundation (Weeks 1-3)
+> **Last updated: 2026-07-01.** Checkboxes reflect merged-to-develop state.
+> PRs merged to `develop` branch of `jsteve1/gasparilla-shopify`.
+
+### Phase 1: Foundation ✅ Complete
 - [x] Sandbox environment with OAuth + webhooks
-- [x] Dockerization of plugin
-- [ ] Shopify Polaris UI scaffold
-- [ ] DynamoDB schema creation with migrations
-- [ ] Lambda deployment pipeline (SAM/Serverless Framework)
-- [ ] Member CRUD operations
-- [ ] Shopify customer ↔ DynamoDB member sync
+- [x] Shopify Polaris UI scaffold (PR #106)
+- [x] DynamoDB table definitions (`src/data/tables.js`)
+- [x] Member CRUD operations (`src/services/memberService.js`)
+- [x] Shopify order webhook → auto-create member (PR #23)
+- [ ] Lambda/SAM deployment pipeline — **not yet; running Express locally**
+- [ ] Dockerization
 
-### Phase 2: Digital Waivers + Sign-Up (Weeks 4-5)
-- [ ] Waiver PDF template upload to S3
-- [ ] Shopify Polaris sign-up form with signature capture
-- [ ] Age-gated minor waivers
-- [ ] Versioned terms with forced re-acceptance
-- [ ] Shopify order webhook → auto-create member on purchase
+### Phase 2: Digital Waivers + Sign-Up ✅ Complete
+- [x] Waiver PDF template upload to S3 (PR #16)
+- [x] Waiver template management + versioning (PR #18)
+- [x] Signature field management per template (PR #21)
+- [x] Age-gated minor waivers / guardian signature (PR #26)
+- [x] Versioned terms with forced re-acceptance (PR #25)
+- [x] Shopify order webhook → auto-create member on purchase (PR #23)
+- [x] Member waiver status in admin UI (PR #24)
+- [x] Shopify Polaris sign-up + waiver screens (PR #115)
 
-### Phase 3: Membership Management + Billing (Weeks 6-9)
-- [ ] Membership tier creation in Shopify Polaris
-- [ ] Shopify Subscription integration
-- [ ] Dunning engine (retry logic, access downgrade)
-- [ ] Balance threshold config + access blocking
-- [ ] Promo codes + concession passes
-- [ ] Upgrade/downgrade with proration
+### Phase 3: Membership Management + Billing ✅ Complete
+- [x] Membership tier creation in Shopify Polaris (PR #121)
+- [x] Shopify Subscription integration (issue #32)
+- [x] Dunning engine — retry logic + access downgrade (issue #33)
+- [x] Balance threshold config + access blocking (issue #34)
+- [x] Upgrade/downgrade with proration (issue #36)
+- [x] Promo codes + concession passes (issue #35)
+- [x] Billing admin screens — Polaris UI (PR #121)
 
-### Phase 4: Booking Engine (Weeks 10-13)
-- [ ] Resource creation (classes, trainers, rooms)
-- [ ] Schedule builder UI
-- [ ] Member booking flow with capacity enforcement
-- [ ] Waitlist system
-- [ ] Auto-check-in on class time + visit
-- [ ] No-show detection + refund logic
+### Phase 4: Booking Engine ✅ Complete
+- [x] Resource creation — classes, trainers, rooms (issue #46)
+- [x] Schedule builder UI — Polaris (PR #124)
+- [x] Member booking flow with capacity enforcement (issue #47)
+- [x] Waitlist system with auto-promotion on cancellation (issue #48)
+- [x] Auto-check-in via access event + schedule cross-reference (issue #49)
+- [x] No-show detection + automated flagging (issue #50)
 
-### Phase 5: Access Control (Weeks 14-16)
-- [ ] Access decision Lambda service
-- [ ] Door + rule configuration in Shopify Polaris
-- [ ] BLE token issuance
-- [ ] Key fob assignment in Shopify Polaris
-- [ ] QR code dynamic check-in
-- [ ] Passcode access system
-- [ ] Integration with Nuki / Salto locks (MVP hardware)
+### Phase 5: Access Control ✅ Complete (software); hardware integration pending
+- [x] Access decision service — door grant/deny engine (issue #56)
+- [x] Door + access rule configuration — Polaris UI (PR #126, PR #131)
+- [x] BLE token issuance and management (issue #58)
+- [x] Key fob assignment and revocation — Polaris UI (issue #59)
+- [x] Dynamic QR code check-in (issue #60)
+- [x] Passcode access — 6-digit PIN (issue #61)
+- [ ] Hardware integration — Nuki / Salto / ZKTeco lock API calls — **not yet**
 
-### Phase 6: Marketing & Retention (Weeks 17-20)
-- [ ] Member segmentation engine
-- [ ] Automated campaign builder
-- [ ] At-risk detection (X days no visit → trigger)
-- [ ] Email + SMS integration (SendGrid + Twilio)
-- [ ] Push notifications (PWA)
-- [ ] Referral system with point rewards
+### Phase 6: Marketing & Retention ✅ Complete
+- [x] Churn detection service (issue #72)
+- [x] Retention trigger engine — at-risk, no-visit, winback (issue #73)
+- [x] Member segmentation engine — 4 segment endpoints (issue #74)
+- [x] Segment browser UI — Polaris (PR #132)
+- [x] Outreach dispatch service — `outreachService.js` (issue #75)
+- [x] Campaign builder UI — Polaris (PR #86/103)
+- [ ] SendGrid wiring — outreachService scaffolded; no live credentials configured
+- [ ] Twilio SMS wiring — same; scaffolded only
+- [ ] Referral system + points engine — not yet built
 
-### Phase 7: Dashboard & Analytics (Weeks 21-23)
-- [ ] KPI aggregation Lambdas
-- [ ] Dashboard widgets (visits, revenue, churn, utilization)
-- [ ] Custom report builder
-- [ ] Real-time visitor board
-- [ ] CSV export for accounting
+### Phase 7: Dashboard & Analytics ✅ Complete
+- [x] KPI aggregation service — `kpiService.js` (issue #81)
+- [x] KPI routes — GET /kpis/daily + POST /kpis/aggregate (issue #82)
+- [x] Dashboard summary route (issue #83)
+- [x] Real-time visitor board — `/visits/active` endpoint (issue #84)
+- [x] CSV export endpoint (issue #85)
+- [x] Dashboard + Analytics Polaris UI pages (PR #123)
 
-### Phase 8: Member App (Weeks 24-28)
-- [ ] Shopify Polaris PWA scaffold
-- [ ] Member profile dashboard
-- [ ] Booking calendar in app
-- [ ] Progress / measurement tracking
-- [ ] Workout viewer for PT clients
-- [ ] Push notifications in PWA
+### Phase 8: Member App ✅ Complete (scaffold + core flows)
+- [x] Shopify Polaris PWA scaffold — `web-member/` (issue #105)
+- [x] Member profile dashboard (issue #105)
+- [x] Booking calendar in app (issue #105)
+- [x] QR check-in screen — rotating member QR (issue #105)
+- [x] Visit history page (issue #105)
+- [x] Service worker / offline support (issue #105)
+- [ ] Progress / measurement tracking — not yet built
+- [ ] Workout viewer for PT clients — not yet built
+- [ ] Push notifications — service worker registered; no push server configured
 
 ---
 
-## 9. Competitive Moats
+## 9. What's Not Built Yet (Post-Roadmap Gaps)
+
+These features are defined in the constitution but have no corresponding issue or implementation:
+
+| Gap | Notes |
+|---|---|
+| **Lambda/SAM production deployment** | App runs Express locally; no serverless deployment pipeline |
+| **Shopify app submission + OAuth production** | Dev OAuth only; not submitted to Shopify App Store |
+| **Hardware API integrations** | Access decision service built; no Nuki/Salto/ZKTeco SDK calls wired |
+| **SendGrid + Twilio live wiring** | `outreachService.js` dispatches; credentials/config not plumbed |
+| **AI-powered retention** | Constitution §4.5 flags OpenAI API; not implemented |
+| **Lead tracking / sales funnel** | `Leads` DynamoDB table + pipeline UI — not started |
+| **Gamification + referral system** | Points engine, referral codes, badges — not started |
+| **Workout tracking + measurement tracking** | `Workouts` table + PT / member views — not started |
+| **DynamoDB migrations** | Tables defined in `tables.js`; no migration runner |
+| **Multi-location / franchise support** | Constitution §10 deferred; still deferred |
+
+---
+
+## 10. Competitive Moats
 
 1. **First full-stack app on Shopify** — nobody bundles signups → waivers → access → billing → retention
 2. **Shopify-native billing** — leverage Shopify Payments + Subscriptions instead of bringing your own Stripe
@@ -401,7 +434,7 @@ KPIs (PK: kpi_id, SK: shop_id#YYYYMMDD)
 
 ---
 
-## 10. Non-Goals (v1)
+## 11. Non-Goals (v1)
 
 | Item | Why |
 |---|---|
@@ -413,7 +446,7 @@ KPIs (PK: kpi_id, SK: shop_id#YYYYMMDD)
 
 ---
 
-## 11. API Contract — Lambda Endpoints
+## 12. API Contract — Lambda Endpoints
 
 ```
 POST   /api/members          — Create member (from Shopify webhook or sign-up)
@@ -444,7 +477,7 @@ POST   /api/kpis/aggregate   — Run aggregation job
 
 ---
 
-## 12. Security & Compliance
+## 13. Security & Compliance
 
 | Requirement | Implementation |
 |---|---|
@@ -458,7 +491,7 @@ POST   /api/kpis/aggregate   — Run aggregation job
 
 ---
 
-## 13. Pricing Model
+## 14. Pricing Model
 
 | Tier | Price | What's Included |
 |---|---|---|
@@ -471,7 +504,7 @@ POST   /api/kpis/aggregate   — Run aggregation job
 
 ---
 
-## 14. Success Metrics (After 1 Year)
+## 15. Success Metrics (After 1 Year)
 
 | Metric | Target |
 |---|---|
@@ -484,4 +517,4 @@ POST   /api/kpis/aggregate   — Run aggregation job
 
 ---
 
-*Document version: 1.0 — Living document. Updated as features are scoped and built.*
+*Document version: 1.1 — Updated 2026-07-01 to reflect actual build state through develop branch.*
