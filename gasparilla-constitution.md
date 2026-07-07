@@ -324,7 +324,7 @@ KPIs (PK: kpi_id, SK: shop_id#YYYYMMDD)
 
 ## 8. Roadmap — Feature Rollout Phases
 
-> **Last updated: 2026-07-01.** Checkboxes reflect merged-to-develop state.
+> **Last updated: 2026-07-07.** Checkboxes reflect merged-to-develop state.
 > PRs merged to `develop` branch of `jsteve1/gasparilla-shopify`.
 
 ### Phase 1: Foundation ✅ Complete
@@ -333,7 +333,7 @@ KPIs (PK: kpi_id, SK: shop_id#YYYYMMDD)
 - [x] DynamoDB table definitions (`src/data/tables.js`)
 - [x] Member CRUD operations (`src/services/memberService.js`)
 - [x] Shopify order webhook → auto-create member (PR #23)
-- [ ] Lambda/SAM deployment pipeline — **not yet; running Express locally**
+- [x] Lambda/SAM deployment pipeline (PR #133)
 - [ ] Dockerization
 
 ### Phase 2: Digital Waivers + Sign-Up ✅ Complete
@@ -379,9 +379,9 @@ KPIs (PK: kpi_id, SK: shop_id#YYYYMMDD)
 - [x] Segment browser UI — Polaris (PR #132)
 - [x] Outreach dispatch service — `outreachService.js` (issue #75)
 - [x] Campaign builder UI — Polaris (PR #86/103)
-- [ ] SendGrid wiring — outreachService scaffolded; no live credentials configured
-- [ ] Twilio SMS wiring — same; scaffolded only
-- [ ] Referral system + points engine — not yet built
+- [x] SendGrid email wiring — live credentials, dispatches via `emailService.js` (PR #142)
+- [x] Twilio SMS wiring — live, dispatches via `smsService.js` (PR #142)
+- [x] Gamification + referral system — points engine, badges, referral codes (PR #134)
 
 ### Phase 7: Dashboard & Analytics ✅ Complete
 - [x] KPI aggregation service — `kpiService.js` (issue #81)
@@ -391,35 +391,37 @@ KPIs (PK: kpi_id, SK: shop_id#YYYYMMDD)
 - [x] CSV export endpoint (issue #85)
 - [x] Dashboard + Analytics Polaris UI pages (PR #123)
 
-### Phase 8: Member App ✅ Complete (scaffold + core flows)
+### Phase 8: Member App ✅ Complete
 - [x] Shopify Polaris PWA scaffold — `web-member/` (issue #105)
 - [x] Member profile dashboard (issue #105)
 - [x] Booking calendar in app (issue #105)
 - [x] QR check-in screen — rotating member QR (issue #105)
 - [x] Visit history page (issue #105)
 - [x] Service worker / offline support (issue #105)
-- [ ] Progress / measurement tracking — not yet built
-- [ ] Workout viewer for PT clients — not yet built
+- [x] Progress / measurement tracking — `measurementService.js` + `WorkoutLog.jsx` (PR #135)
+- [x] Workout viewer for PT clients — `workoutService.js` + routes (PR #135)
 - [ ] Push notifications — service worker registered; no push server configured
+
+### Post-Roadmap Additions ✅ Complete
+Features beyond the original 8-phase plan, shipped July 2026:
+
+- [x] Lead tracking + sales funnel — `leadTrackingService.js`, `Leads` DynamoDB table, `/leads` routes, Polaris pipeline UI (PRs #137, #143)
+- [x] GDPR compliance service — all 4 Shopify GDPR webhook handlers with full test coverage (PRs #143, #146)
+- [x] Shopify App Store submission prep — `shopify.app.toml` manifest, OAuth scopes tightened, `docs/shopify-submission-checklist.md` (PRs #145, #146)
 
 ---
 
-## 9. What's Not Built Yet (Post-Roadmap Gaps)
-
-These features are defined in the constitution but have no corresponding issue or implementation:
+## 9. What's Not Built Yet
 
 | Gap | Notes |
 |---|---|
-| **Lambda/SAM production deployment** | App runs Express locally; no serverless deployment pipeline |
-| **Shopify app submission + OAuth production** | Dev OAuth only; not submitted to Shopify App Store |
-| **Hardware API integrations** | Access decision service built; no Nuki/Salto/ZKTeco SDK calls wired |
-| **SendGrid + Twilio live wiring** | `outreachService.js` dispatches; credentials/config not plumbed |
-| **AI-powered retention** | Constitution §4.5 flags OpenAI API; not implemented |
-| **Lead tracking / sales funnel** | `Leads` DynamoDB table + pipeline UI — not started |
-| **Gamification + referral system** | Points engine, referral codes, badges — not started |
-| **Workout tracking + measurement tracking** | `Workouts` table + PT / member views — not started |
-| **DynamoDB migrations** | Tables defined in `tables.js`; no migration runner |
-| **Multi-location / franchise support** | Constitution §10 deferred; still deferred |
+| **Hardware API integrations** | Access decision service built; no Nuki/Salto/ZKTeco SDK calls wired — requires hardware partner or test device |
+| **Push notifications** | PWA service worker registered; no push server or VAPID keys configured |
+| **AI-powered retention** | Constitution §4.5 flags OpenAI for message suggestions; not implemented |
+| **DynamoDB migration runner** | Tables defined in `tables.js`; no tooling to apply schema changes to live DBs |
+| **Production OAuth + App Store listing** | `shopify.app.toml` and OAuth scopes done; Partner dashboard submission and app listing assets (screenshots, icon) are human tasks |
+| **Dockerization** | App runs Node 20 + Express locally and Lambda in prod; no Docker image |
+| **Multi-location / franchise support** | Deferred to v2; current data model is single-shop |
 
 ---
 
@@ -517,4 +519,4 @@ POST   /api/kpis/aggregate   — Run aggregation job
 
 ---
 
-*Document version: 1.1 — Updated 2026-07-01 to reflect actual build state through develop branch.*
+*Document version: 1.2 — Updated 2026-07-07 to reflect all-phases-complete state. Phases 1–8 plus post-roadmap additions (lead tracking, GDPR, App Store prep) all merged to develop.*
