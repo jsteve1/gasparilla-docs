@@ -267,16 +267,16 @@
 <div class="container">
 
   <div class="header">
-    <div class="badge">v1.0 — Living Document</div>
+    <div class="badge">v1.2 — Updated 2026-07-07</div>
     <h1>Gasparilla Shopify</h1>
-    <p>Full-stack gym management plugin — 8 phases, 28 weeks, $89/mo target. Replicating and improving GymMaster feature-for-feature on Shopify.</p>
+    <p>Full-stack gym management plugin — 8 phases shipped + post-roadmap additions. All core phases complete and merged to develop.</p>
   </div>
 
   <div class="summary">
-    <div class="summary-card"><div class="summary-num">8</div><div class="summary-label">Phases</div></div>
-    <div class="summary-card"><div class="summary-num">28</div><div class="summary-label">Weeks</div></div>
+    <div class="summary-card"><div class="summary-num">8+</div><div class="summary-label">Phases</div></div>
+    <div class="summary-card"><div class="summary-num" style="color:var(--accent-emerald)">ALL</div><div class="summary-label">Shipped ✓</div></div>
     <div class="summary-card"><div class="summary-num" id="taskTotal">42</div><div class="summary-label">Stories</div></div>
-    <div class="summary-card"><div class="summary-num">Serverless</div><div class="summary-label">Stack</div></div>
+    <div class="summary-card"><div class="summary-num">590</div><div class="summary-label">Tests Passing</div></div>
     <div class="summary-card"><div class="summary-num">$89</div><div class="summary-label">Pro Price</div></div>
   </div>
 
@@ -306,7 +306,7 @@
 <script>
 const PHASES = [
   {
-    num: 1, title: "Foundation", weeks: "Week 1–3",
+    num: 1, title: "Foundation", weeks: "Week 1–3", shipped: true, pr: "PRs #23, #106",
     color: "#3b82f6", gradient: "linear-gradient(135deg, #3b82f6, #2563eb)",
     group: "1-2",
     tasks: [
@@ -317,10 +317,11 @@ const PHASES = [
       "API Gateway + Lambda bootstrap",
       "GitHub repo + CI basics",
       "Dev environment documented (README)",
+      "Lambda/SAM deployment pipeline (PR #133)",
     ]
   },
   {
-    num: 2, title: "Digital Waivers + Sign-Up", weeks: "Week 4–5",
+    num: 2, title: "Digital Waivers + Sign-Up", weeks: "Week 4–5", shipped: true, pr: "PRs #16–26, #115",
     color: "#8b5cf6", gradient: "linear-gradient(135deg, #8b5cf6, #7c3aed)",
     group: "1-2",
     tasks: [
@@ -334,7 +335,7 @@ const PHASES = [
     ]
   },
   {
-    num: 3, title: "Membership & Billing", weeks: "Week 6–9",
+    num: 3, title: "Membership & Billing", weeks: "Week 6–9", shipped: true, pr: "PRs #121, issues #32–36",
     color: "#10b981", gradient: "linear-gradient(135deg, #10b981, #059669)",
     group: "3-4",
     tasks: [
@@ -349,7 +350,7 @@ const PHASES = [
     ]
   },
   {
-    num: 4, title: "Booking Engine", weeks: "Week 10–13",
+    num: 4, title: "Booking Engine", weeks: "Week 10–13", shipped: true, pr: "PRs #124, issues #46–50",
     color: "#f59e0b", gradient: "linear-gradient(135deg, #f59e0b, #d97706)",
     group: "3-4",
     tasks: [
@@ -362,7 +363,7 @@ const PHASES = [
     ]
   },
   {
-    num: 5, title: "Access Control", weeks: "Week 14–16",
+    num: 5, title: "Access Control", weeks: "Week 14–16", shipped: true, pr: "PRs #126, #131, issues #56–61",
     color: "#f43f5e", gradient: "linear-gradient(135deg, #f43f5e, #e11d48)",
     group: "5-6",
     tasks: [
@@ -372,24 +373,25 @@ const PHASES = [
       "Key fob assignment",
       "QR code dynamic check-in",
       "Passcode access system",
-      "Integration with Nuki/Salto locks (MVP)",
+      "⚠ Hardware lock API (Nuki/Salto) — pending",
     ]
   },
   {
-    num: 6, title: "Marketing & Retention", weeks: "Week 17–20",
+    num: 6, title: "Marketing & Retention", weeks: "Week 17–20", shipped: true, pr: "PRs #86, #103, #132, #134, #142",
     color: "#06b6d4", gradient: "linear-gradient(135deg, #06b6d4, #0891b2)",
     group: "5-6",
     tasks: [
       "Member segmentation engine",
       "Automated campaign builder",
       "At-risk detection (X days no visit → trigger)",
-      "Email + SMS integration (SendGrid + Twilio)",
-      "Push notifications (PWA)",
-      "Referral system with point rewards",
+      "SendGrid email integration — live (PR #142)",
+      "Twilio SMS integration — live (PR #142)",
+      "Gamification + referral system — points, badges, codes (PR #134)",
+      "⚠ Push notifications — service worker only; no push server",
     ]
   },
   {
-    num: 7, title: "Dashboard & Analytics", weeks: "Week 21–23",
+    num: 7, title: "Dashboard & Analytics", weeks: "Week 21–23", shipped: true, pr: "PRs #123, issues #81–85",
     color: "#f97316", gradient: "linear-gradient(135deg, #f97316, #ea580c)",
     group: "7-8",
     tasks: [
@@ -401,16 +403,26 @@ const PHASES = [
     ]
   },
   {
-    num: 8, title: "Member App (PWA)", weeks: "Week 24–28",
+    num: 8, title: "Member App (PWA)", weeks: "Week 24–28", shipped: true, pr: "PRs #105, #135",
     color: "#ec4899", gradient: "linear-gradient(135deg, #ec4899, #db2777)",
     group: "7-8",
     tasks: [
       "Shopify Polaris PWA scaffold",
       "Member profile dashboard",
       "Booking calendar in app",
-      "Progress / measurement tracking",
-      "Workout viewer for PT clients",
-      "Push notifications in PWA",
+      "Progress / measurement tracking (PR #135)",
+      "Workout viewer for PT clients (PR #135)",
+      "⚠ Push notifications — service worker only; no push server",
+    ]
+  },
+  {
+    num: "✦", title: "Post-Roadmap Additions", weeks: "July 2026", shipped: true, pr: "PRs #137, #143, #145, #146",
+    color: "#6366f1", gradient: "linear-gradient(135deg, #6366f1, #4f46e5)",
+    group: "7-8",
+    tasks: [
+      "Lead tracking + sales funnel — Leads table, pipeline UI, /leads routes (PR #143)",
+      "GDPR compliance service — all 4 Shopify webhook handlers (PRs #143, #146)",
+      "Shopify App Store prep — shopify.app.toml, OAuth scopes, submission checklist (PRs #145, #146)",
     ]
   }
 ];
@@ -424,11 +436,12 @@ function setTaskState(phase, idx, val) {
   localStorage.setItem(`task_${phase}_${idx}`, val);
 }
 
-// Calculate progress
+// Calculate progress — shipped phases count as done; ⚠ tasks are pending
 function updateProgress() {
   let total = 0, done = 0;
-  PHASES.forEach((p, pi) => p.tasks.forEach((_, ti) => {
-    total++; if (getTaskState(pi, ti)) done++;
+  PHASES.forEach(p => p.tasks.forEach(t => {
+    total++;
+    if (p.shipped && !t.startsWith('⚠')) done++;
   }));
   const pct = total ? Math.round(done/total*100) : 0;
   document.getElementById('progressPct').textContent = pct + '%';
@@ -439,15 +452,20 @@ function updateProgress() {
 // Render timeline
 function render() {
   const el = document.getElementById('timeline');
-  el.innerHTML = PHASES.map((p, pi) => `
+  el.innerHTML = PHASES.map((p, pi) => {
+    const shippedBadge = p.shipped
+      ? `<span style="font-size:11px;font-weight:600;padding:2px 8px;border-radius:999px;background:rgba(16,185,129,0.15);color:#10b981;border:1px solid rgba(16,185,129,0.3);margin-left:8px;">SHIPPED ✓</span>`
+      : '';
+    const prNote = p.pr ? `<div style="font-size:11px;color:var(--text-muted);margin-top:2px;">${p.pr}</div>` : '';
+    return `
     <div class="phase-group" data-group="${p.group}" id="phase${pi}">
       <div class="phase-dot" style="--dot-color:${p.color}"></div>
       <div class="phase-card" onclick="document.getElementById('phase${pi}').classList.toggle('open')">
         <div class="phase-header">
-          <div class="phase-number" style="background:${p.gradient};color:#fff">${p.num}</div>
+          <div class="phase-number" style="background:${p.gradient};color:#fff;font-size:${typeof p.num === 'number' ? '16' : '12'}px">${p.num}</div>
           <div class="phase-meta">
-            <div class="phase-title">${p.title}</div>
-            <div class="phase-weeks">${p.weeks} · ${p.tasks.length} stories</div>
+            <div class="phase-title">${p.title}${shippedBadge}</div>
+            <div class="phase-weeks">${p.weeks} · ${p.tasks.length} stories${prNote}</div>
           </div>
           <svg class="phase-chevron" width="20" height="20" viewBox="0 0 20 20" fill="none">
             <path d="M5 8l5 5 5-5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
@@ -457,9 +475,10 @@ function render() {
           <div class="phase-body-inner">
             <ul class="task-list">
               ${p.tasks.map((t, ti) => {
-                const done = getTaskState(pi, ti);
+                const pending = t.startsWith('⚠');
+                const done = p.shipped && !pending;
                 return `<li class="task-item${done ? ' completed' : ''}">
-                  <div class="task-check${done ? ' done' : ''}" onclick="event.stopPropagation();toggle(${pi},${ti})"></div>
+                  <div class="task-check${done ? ' done' : ''}" style="${pending ? 'border-color:#f59e0b' : ''}"></div>
                   <span class="task-label">${t}</span>
                 </li>`;
               }).join('')}
@@ -468,7 +487,7 @@ function render() {
         </div>
       </div>
     </div>
-  `).join('');
+  `}).join('');
   updateProgress();
 }
 
