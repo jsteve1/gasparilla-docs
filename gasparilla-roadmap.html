@@ -267,16 +267,16 @@
 <div class="container">
 
   <div class="header">
-    <div class="badge">v1.2 — Updated 2026-07-07</div>
+    <div class="badge">v1.3 — Updated 2026-07-24</div>
     <h1>Gasparilla Shopify</h1>
-    <p>Full-stack gym management plugin — 8 phases shipped + post-roadmap additions. All core phases complete and merged to develop.</p>
+    <p>Full-stack gym management plugin — 8 phases shipped + post-roadmap additions. Phase 9 (data layer consistency) in progress.</p>
   </div>
 
   <div class="summary">
-    <div class="summary-card"><div class="summary-num">8+</div><div class="summary-label">Phases</div></div>
-    <div class="summary-card"><div class="summary-num" style="color:var(--accent-emerald)">ALL</div><div class="summary-label">Shipped ✓</div></div>
+    <div class="summary-card"><div class="summary-num">9</div><div class="summary-label">Phases</div></div>
+    <div class="summary-card"><div class="summary-num" style="color:var(--accent-emerald)">8/9</div><div class="summary-label">Shipped ✓</div></div>
     <div class="summary-card"><div class="summary-num" id="taskTotal">42</div><div class="summary-label">Stories</div></div>
-    <div class="summary-card"><div class="summary-num">590</div><div class="summary-label">Tests Passing</div></div>
+    <div class="summary-card"><div class="summary-num">754</div><div class="summary-label">Tests Passing</div></div>
     <div class="summary-card"><div class="summary-num">$89</div><div class="summary-label">Pro Price</div></div>
   </div>
 
@@ -294,6 +294,7 @@
     <button class="filter-btn" data-filter="3-4">Core Features</button>
     <button class="filter-btn" data-filter="5-6">Advanced</button>
     <button class="filter-btn" data-filter="7-8">Finishing</button>
+    <button class="filter-btn" data-filter="9">In Progress</button>
   </div>
 
   <div class="timeline" id="timeline"></div>
@@ -416,13 +417,30 @@ const PHASES = [
     ]
   },
   {
-    num: "✦", title: "Post-Roadmap Additions", weeks: "July 2026", shipped: true, pr: "PRs #137, #143, #145, #146",
+    num: "✦", title: "Post-Roadmap Additions", weeks: "July 2026", shipped: true, pr: "PRs #137, #143, #145, #146, #150, #178",
     color: "#6366f1", gradient: "linear-gradient(135deg, #6366f1, #4f46e5)",
     group: "7-8",
     tasks: [
       "Lead tracking + sales funnel — Leads table, pipeline UI, /leads routes (PR #143)",
       "GDPR compliance service — all 4 Shopify webhook handlers (PRs #143, #146)",
       "Shopify App Store prep — shopify.app.toml, OAuth scopes, submission checklist (PRs #145, #146)",
+      "Shopify session token validation + App Bridge wiring (PR #109, #150)",
+      "Embedded app shell fixed — AppProvider, layout route, real Polaris icons (PRs #152, #178)",
+      "Dead-code cleanup — Leads CRUD, duplicate GDPR route (PRs #176, #177)",
+    ]
+  },
+  {
+    num: 9, title: "Data Layer Consistency", weeks: "Started July 2026", shipped: false, pr: "issues #169–175",
+    color: "#eab308", gradient: "linear-gradient(135deg, #eab308, #ca8a04)",
+    group: "9",
+    tasks: [
+      "TanStack Query + shared authenticated API client — Dashboard migration (issue #169)",
+      "⚠ Migrate Billing, Bookings, Access pages to API client (issue #170)",
+      "⚠ Migrate Marketing, Waivers, Members pages to API client (issue #171)",
+      "⚠ Migrate ProrationModal, WaitlistPanel, MemberDetail to API client (issue #172)",
+      "⚠ Migrate SignupModal, TemplateEditor to API client (issue #173)",
+      "⚠ Wire 8 unrouted admin pages into App routes + AppFrame nav (issue #174)",
+      "⚠ Migrate PromoCodeManager to API client + add missing test (issue #175)",
     ]
   }
 ];

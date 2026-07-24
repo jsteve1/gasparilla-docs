@@ -324,7 +324,7 @@ KPIs (PK: kpi_id, SK: shop_id#YYYYMMDD)
 
 ## 8. Roadmap — Feature Rollout Phases
 
-> **Last updated: 2026-07-07.** Checkboxes reflect merged-to-develop state.
+> **Last updated: 2026-07-24.** Checkboxes reflect merged-to-develop state.
 > PRs merged to `develop` branch of `jsteve1/gasparilla-shopify`.
 
 ### Phase 1: Foundation ✅ Complete
@@ -408,6 +408,20 @@ Features beyond the original 8-phase plan, shipped July 2026:
 - [x] Lead tracking + sales funnel — `leadTrackingService.js`, `Leads` DynamoDB table, `/leads` routes, Polaris pipeline UI (PRs #137, #143)
 - [x] GDPR compliance service — all 4 Shopify GDPR webhook handlers with full test coverage (PRs #143, #146)
 - [x] Shopify App Store submission prep — `shopify.app.toml` manifest, OAuth scopes tightened, `docs/shopify-submission-checklist.md` (PRs #145, #146)
+- [x] Shopify session token validation — App Bridge wired for embedded session-token auth (PR #109, #150)
+- [x] Embedded app shell fixed — real Polaris v9 icon imports, `AppProvider`, react-router layout route, `Frame` nav/topBar (PRs #152, #178)
+- [x] Dead-code cleanup — removed unused Leads CRUD methods and unmounted duplicate GDPR webhook route (PRs #176, #177)
+
+### Phase 9: Data Layer Consistency 🚧 In Progress
+Started 2026-07-24. Most Polaris pages fetch data ad hoc rather than through a shared client, and 8 built pages aren't wired into `AppFrame` nav.
+
+- [ ] TanStack Query + shared authenticated API client — foundation + Dashboard migration (issue #169)
+- [ ] Migrate Billing, Bookings, Access pages to API client + `useQuery` (issue #170)
+- [ ] Migrate Marketing, Waivers, Members pages to API client + `useQuery` (issue #171)
+- [ ] Migrate `ProrationModal`, `WaitlistPanel`, `MemberDetail` components to API client (issue #172)
+- [ ] Migrate `SignupModal`, `TemplateEditor` to API client (issue #173)
+- [ ] Wire 8 unrouted admin pages into `App` routes + `AppFrame` nav (issue #174)
+- [ ] Migrate `PromoCodeManager` to API client + add missing test (issue #175)
 
 ---
 
@@ -415,6 +429,8 @@ Features beyond the original 8-phase plan, shipped July 2026:
 
 | Gap | Notes |
 |---|---|
+| **Shared API client / data-fetching consistency** | Most Polaris pages call `fetch` directly; no TanStack Query or shared auth client yet — in progress, see Phase 9 (issues #169–175) |
+| **8 built-but-unrouted admin pages** | Pages exist under `web/src/pages/` but aren't wired into `App.jsx` routes or `AppFrame` nav — tracked in issue #174 |
 | **Hardware API integrations** | Access decision service built; no Nuki/Salto/ZKTeco SDK calls wired — requires hardware partner or test device |
 | **Push notifications** | PWA service worker registered; no push server or VAPID keys configured |
 | **AI-powered retention** | Constitution §4.5 flags OpenAI for message suggestions; not implemented |
@@ -519,4 +535,4 @@ POST   /api/kpis/aggregate   — Run aggregation job
 
 ---
 
-*Document version: 1.2 — Updated 2026-07-07 to reflect all-phases-complete state. Phases 1–8 plus post-roadmap additions (lead tracking, GDPR, App Store prep) all merged to develop.*
+*Document version: 1.3 — Updated 2026-07-24. Phases 1–8 plus post-roadmap additions (lead tracking, GDPR, App Store prep, App Bridge/session-token auth, embedded app shell fixes) all merged to develop. Phase 9 (TanStack Query + shared API client, issues #169–175) is the active work — human-in-the-loop dispatch via `scripts/queue-issue.sh`, jsteve1 approves/merges each PR.*
